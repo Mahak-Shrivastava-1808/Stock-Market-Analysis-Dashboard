@@ -1,0 +1,91 @@
+{
+  "version": "0.0.0",
+  "name": "stock-market-dashboard",
+  "dependencies": {
+    "@eslint/js": {
+      "version": "9.37.0",
+      "resolved": "https://registry.npmjs.org/@eslint/js/-/js-9.37.0.tgz",
+      "overridden": false
+    },
+    "@tailwindcss/vite": {
+      "version": "4.1.14",
+      "resolved": "https://registry.npmjs.org/@tailwindcss/vite/-/vite-4.1.14.tgz",
+      "overridden": false
+    },
+    "@types/react-dom": {
+      "version": "19.2.1",
+      "resolved": "https://registry.npmjs.org/@types/react-dom/-/react-dom-19.2.1.tgz",
+      "overridden": false
+    },
+    "@types/react": {
+      "version": "19.2.2",
+      "resolved": "https://registry.npmjs.org/@types/react/-/react-19.2.2.tgz",
+      "overridden": false
+    },
+    "@vitejs/plugin-react": {
+      "version": "5.0.4",
+      "resolved": "https://registry.npmjs.org/@vitejs/plugin-react/-/plugin-react-5.0.4.tgz",
+      "overridden": false
+    },
+    "autoprefixer": {
+      "version": "10.4.21",
+      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-10.4.21.tgz",
+      "overridden": false
+    },
+    "eslint-plugin-react-hooks": {
+      "version": "5.2.0",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-5.2.0.tgz",
+      "overridden": false
+    },
+    "eslint-plugin-react-refresh": {
+      "version": "0.4.23",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-react-refresh/-/eslint-plugin-react-refresh-0.4.23.tgz",
+      "overridden": false
+    },
+    "eslint": {
+      "version": "9.37.0",
+      "resolved": "https://registry.npmjs.org/eslint/-/eslint-9.37.0.tgz",
+      "overridden": false
+    },
+    "globals": {
+      "version": "16.4.0",
+      "resolved": "https://registry.npmjs.org/globals/-/globals-16.4.0.tgz",
+      "overridden": false
+    },
+    "lucide-react": {
+      "version": "0.545.0",
+      "resolved": "https://registry.npmjs.org/lucide-react/-/lucide-react-0.545.0.tgz",
+      "overridden": false
+    },
+    "postcss": {
+      "version": "8.5.6",
+      "resolved": "https://registry.npmjs.org/postcss/-/postcss-8.5.6.tgz",
+      "overridden": false
+    },
+    "react-dom": {
+      "version": "19.2.0",
+      "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-19.2.0.tgz",
+      "overridden": false
+    },
+    "react": {
+      "version": "19.2.0",
+      "resolved": "https://registry.npmjs.org/react/-/react-19.2.0.tgz",
+      "overridden": false
+    },
+    "recharts": {
+      "version": "3.2.1",
+      "resolved": "https://registry.npmjs.org/recharts/-/recharts-3.2.1.tgz",
+      "overridden": false
+    },
+    "tailwindcss": {
+      "version": "4.1.14",
+      "resolved": "https://registry.npmjs.org/tailwindcss/-/tailwindcss-4.1.14.tgz",
+      "overridden": false
+    },
+    "vite": {
+      "version": "7.1.9",
+      "resolved": "https://registry.npmjs.org/vite/-/vite-7.1.9.tgz",
+      "overridden": false
+    }
+  }
+}
