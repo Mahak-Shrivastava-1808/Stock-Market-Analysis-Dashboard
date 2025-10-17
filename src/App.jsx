@@ -3,6 +3,12 @@ import Sidebar from "./components/Layout/Sidebar";
 import Header from "./components/Layout/Header";
 import Dashboard from "./components/Dashboard/Dashboard";
 import Settings from "./components/Settings/Settings";
+import Portfolio from "./components/Portfolio/Portfolio";
+import Watchlist from "./components/Watchlist/Watchlist";
+import News from "./components/News/News";
+import Logout from "./components/Logout/Logout";
+import Sectors from "./components/Sectors/Sectors";
+
 
 
 function App() {
@@ -44,6 +50,12 @@ function App() {
             <div className="p-6 space-y-6">
               {currentPage === "dashboard" && <Dashboard />}
               {currentPage === "settings" && <Settings />}
+              {currentPage === "portfolio" && <Portfolio />}
+              {currentPage === "watchlist" && <Watchlist />}
+              {currentPage === "news" && <News />}
+              {currentPage === "logout" && <Logout/>}
+              {currentPage === "sectors" && <Sectors/>}
+
             </div>
           </main>
         </div>

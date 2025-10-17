@@ -147,7 +147,7 @@ function Header({ sidebarCollapsed, onToggleSidebar }) {
                   Sheikh Nikhat
                 </p>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Stock Analyst
+                  User
                 </p>
               </div>
               <ChevronDown className="w-4 h-4 text-slate-400" />

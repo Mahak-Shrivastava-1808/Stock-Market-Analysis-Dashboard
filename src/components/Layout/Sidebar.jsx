@@ -61,7 +61,7 @@ const menuItems = [
   {
     id: "settings",
     icon: Settings,
-    label: "Settings",
+    label: " Profile & Settings",
   },
   {
     id: "logout",
@@ -112,7 +112,7 @@ function Sidebar({ collapsed, currentPage, onPageChange }) {
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         {menuItems.map((item) => {
           const Icon = item.icon;
-          const isActive = currentPage === item.id; // ✅ fixed line
+          const isActive = currentPage === item.id; 
 
           return (
             <div key={item.id}>
@@ -174,7 +174,7 @@ function Sidebar({ collapsed, currentPage, onPageChange }) {
                 Sheikh Nikhat
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
-                Stock Analyst
+                User
               </p>
             </div>
           </div>
