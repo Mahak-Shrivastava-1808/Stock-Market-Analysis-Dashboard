@@ -8,30 +8,52 @@ import Watchlist from "./components/Watchlist/Watchlist";
 import News from "./components/News/News";
 import Logout from "./components/Logout/Logout";
 import Sectors from "./components/Sectors/Sectors";
-
-
+import Login from "./components/Auth/Login";
+import Signup from "./components/Auth/Signup";
 
 function App() {
   const [sideBarCollapsed, setSideBarCollapsed] = useState(false);
   const [currentPage, setCurrentPage] = useState("dashboard");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showSignup, setShowSignup] = useState(false);
 
-  // ✅ Load last visited page from localStorage
   useEffect(() => {
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) setIsAuthenticated(true);
+
     const savedPage = localStorage.getItem("currentPage");
-    if (savedPage) {
-      setCurrentPage(savedPage);
-    }
+    if (savedPage) setCurrentPage(savedPage);
+
+    window.onPageChange = setCurrentPage;
   }, []);
 
-  // ✅ Save current page whenever it changes
   useEffect(() => {
     localStorage.setItem("currentPage", currentPage);
   }, [currentPage]);
 
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setIsAuthenticated(false);
+    setShowSignup(false);
+  };
+
+  if (!isAuthenticated) {
+    return showSignup ? (
+      <Signup
+        onSignup={() => setIsAuthenticated(true)}
+        onSwitchToLogin={() => setShowSignup(false)}
+      />
+    ) : (
+      <Login
+        onLogin={() => setIsAuthenticated(true)}
+        onSwitchToSignup={() => setShowSignup(true)}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:to-slate-900 transition-all duration-500">
       <div className="flex h-screen overflow-hidden">
-        {/* Sidebar */}
         <Sidebar
           collapsed={sideBarCollapsed}
           onToggle={() => setSideBarCollapsed(!sideBarCollapsed)}
@@ -39,11 +61,11 @@ function App() {
           onPageChange={setCurrentPage}
         />
 
-        {/* Main Area */}
         <div className="flex-1 flex flex-col overflow-hidden">
           <Header
             sideBarCollapsed={sideBarCollapsed}
             onToggleSidebar={() => setSideBarCollapsed(!sideBarCollapsed)}
+            onLogout={handleLogout}
           />
 
           <main className="flex-1 overflow-y-auto bg-transparent">
@@ -53,9 +75,8 @@ function App() {
               {currentPage === "portfolio" && <Portfolio />}
               {currentPage === "watchlist" && <Watchlist />}
               {currentPage === "news" && <News />}
-              {currentPage === "logout" && <Logout/>}
-              {currentPage === "sectors" && <Sectors/>}
-
+              {currentPage === "logout" && <Logout />}
+              {currentPage === "sectors" && <Sectors />}
             </div>
           </main>
         </div>

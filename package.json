@@ -29,5 +29,18 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.14",
     "vite": "^7.1.7"
-  }
+  },
+  "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
+  "main": "eslint.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mahak-Shrivastava-1808/Stock-Market-Analysis-Dashboard.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mahak-Shrivastava-1808/Stock-Market-Analysis-Dashboard/issues"
+  },
+  "homepage": "https://github.com/Mahak-Shrivastava-1808/Stock-Market-Analysis-Dashboard#readme"
 }

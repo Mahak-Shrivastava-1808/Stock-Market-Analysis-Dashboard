@@ -14,11 +14,7 @@ import {
 } from "lucide-react";
 
 const menuItems = [
-  {
-    id: "dashboard",
-    icon: LayoutDashboard,
-    label: "Dashboard",
-  },
+  { id: "dashboard", icon: LayoutDashboard, label: "Dashboard" },
   {
     id: "market-overview",
     icon: LineChart,
@@ -29,16 +25,8 @@ const menuItems = [
       { id: "top-losers", label: "Top Losers" },
     ],
   },
-  {
-    id: "portfolio",
-    icon: Wallet,
-    label: "My Portfolio",
-  },
-  {
-    id: "watchlist",
-    icon: Star,
-    label: "Watchlist",
-  },
+  { id: "portfolio", icon: Wallet, label: "My Portfolio" },
+  { id: "watchlist", icon: Star, label: "Watchlist" },
   {
     id: "analytics",
     icon: BarChart2,
@@ -48,26 +36,10 @@ const menuItems = [
       { id: "growth", label: "Growth Overview" },
     ],
   },
-  {
-    id: "news",
-    icon: Newspaper,
-    label: "Market News",
-  },
-  {
-    id: "sectors",
-    icon: PieChart,
-    label: "Sector Analysis",
-  },
-  {
-    id: "settings",
-    icon: Settings,
-    label: " Profile & Settings",
-  },
-  {
-    id: "logout",
-    icon: LogOut,
-    label: "Logout",
-  },
+  { id: "news", icon: Newspaper, label: "Market News" },
+  { id: "sectors", icon: PieChart, label: "Sector Analysis" },
+  { id: "settings", icon: Settings, label: "Profile & Settings" },
+  { id: "logout", icon: LogOut, label: "Logout" },
 ];
 
 function Sidebar({ collapsed, currentPage, onPageChange }) {
@@ -75,13 +47,13 @@ function Sidebar({ collapsed, currentPage, onPageChange }) {
 
   const toggleExpanded = (itemId) => {
     const newExpanded = new Set(expandedItems);
-    if (newExpanded.has(itemId)) {
-      newExpanded.delete(itemId);
-    } else {
-      newExpanded.add(itemId);
-    }
+    if (newExpanded.has(itemId)) newExpanded.delete(itemId);
+    else newExpanded.add(itemId);
     setExpandedItems(newExpanded);
   };
+
+  // ✅ Get user info from localStorage
+  const user = JSON.parse(localStorage.getItem("user"));
 
   return (
     <div
@@ -112,8 +84,7 @@ function Sidebar({ collapsed, currentPage, onPageChange }) {
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         {menuItems.map((item) => {
           const Icon = item.icon;
-          const isActive = currentPage === item.id; 
-
+          const isActive = currentPage === item.id;
           return (
             <div key={item.id}>
               <button
@@ -142,7 +113,7 @@ function Sidebar({ collapsed, currentPage, onPageChange }) {
                 )}
               </button>
 
-              {/* Submenu items */}
+              {/* Submenu */}
               {!collapsed && item.submenu && expandedItems.has(item.id) && (
                 <div className="ml-8 mt-2 space-y-1">
                   {item.submenu.map((subitem) => (
@@ -160,7 +131,7 @@ function Sidebar({ collapsed, currentPage, onPageChange }) {
         })}
       </nav>
 
-      {/* User Profile */}
+      {/* ✅ User Profile Section */}
       {!collapsed && (
         <div className="p-4 border-t border-slate-200/50 dark:border-slate-700/50">
           <div className="flex items-center space-x-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50">
@@ -171,10 +142,10 @@ function Sidebar({ collapsed, currentPage, onPageChange }) {
             />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-slate-800 dark:text-white truncate">
-                Sheikh Nikhat
+                {user?.name || "Guest User"}
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
-                User
+                {user?.email || "guest@example.com"}
               </p>
             </div>
           </div>
