@@ -1,25 +1,35 @@
-import React from 'react'
+import React, { useState } from 'react';
 import StatsGrid from './StatsGrid';
 import ChartSection from './ChartSection';
-// import TableSection from './TableSection';
-
 
 function Dashboard() {
+  const [selectedTicker, setSelectedTicker] = useState("AAPL");
+
   return (
     <div className='space-y-6'>
-        {/* Statd Grid */}
-        <StatsGrid />
+      {/* Ticker Selection */}
+      <div className="flex items-center gap-4">
+        <label htmlFor="ticker">Select Stock:</label>
+        <select
+          id="ticker"
+          value={selectedTicker}
+          onChange={(e) => setSelectedTicker(e.target.value)}
+          className="border px-2 py-1 rounded"
+        >
+          <option value="AAPL">Apple (AAPL)</option>
+          <option value="GOOGL">Google (GOOGL)</option>
+          <option value="MSFT">Microsoft (MSFT)</option>
+          <option value="TSLA">Tesla (TSLA)</option>
+        </select>
+      </div>
 
-        {/* Chart Section */}
-        <ChartSection />
+      {/* Stats Grid */}
+      <StatsGrid ticker={selectedTicker} />
 
-        {/* <div className='grid grid-cols-1 xl:grid-cols-3 gap-6'>
-            <div className='xl:col-span-2'>
-                <TableSection />
-            </div>
-        </div> */}
+      {/* Chart Section */}
+      <ChartSection ticker={selectedTicker} />
     </div>
-  )
+  );
 }
 
 export default Dashboard;

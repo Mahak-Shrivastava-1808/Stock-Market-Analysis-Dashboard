@@ -1,15 +1,40 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { TrendingUp, TrendingDown, PieChart } from "lucide-react";
-
-const sectors = [
-  { name: "Technology", change: 2.5 },
-  { name: "Healthcare", change: -1.2 },
-  { name: "Finance", change: 0.8 },
-  { name: "Energy", change: -0.5 },
-  { name: "Consumer Goods", change: 1.8 },
-];
+import axios from "axios";
 
 function Sectors() {
+  const [sectors, setSectors] = useState([]);
+
+  useEffect(() => {
+    const fetchSectorData = async () => {
+      try {
+        // Replace with your own backend or external API if available
+        const res = await axios.get("https://api.mocki.io/v2/79f05c5e"); // 🔁 Replace with real endpoint
+        const data = res.data;
+
+        // Format data: [{ name: "Technology", change: 2.5 }, ...]
+        const formatted = data.map((item) => ({
+          name: item.sector,
+          change: parseFloat(item.change),
+        }));
+
+        setSectors(formatted);
+      } catch (error) {
+        console.error("Error fetching sector data:", error);
+        // Fallback dummy data
+        setSectors([
+          { name: "Banking", change: 1.2 },
+          { name: "Infotech", change: 2.1 },
+          { name: "Auto", change: -0.6 },
+          { name: "Energy", change: -1.4 },
+          { name: "Pharma", change: 0.9 },
+        ]);
+      }
+    };
+
+    fetchSectorData();
+  }, []);
+
   return (
     <div className="space-y-6">
       {/* Page Title */}

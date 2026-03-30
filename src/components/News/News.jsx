@@ -1,60 +1,57 @@
 import React, { useState, useEffect } from "react";
 import { Newspaper, Search, Filter } from "lucide-react";
+import axios from "axios";
 
 function News() {
   const [newsData, setNewsData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  // Dummy data for offline use (you can replace with API later)
-  const dummyNews = [
-    {
-      id: 1,
-      title: "NIFTY closes higher as IT stocks rally",
-      description:
-        "Indian indices ended on a positive note led by gains in IT and banking stocks. Experts expect momentum to continue.",
-      source: "Moneycontrol",
-      date: "2025-10-16",
-      category: "NIFTY",
-      image:
-        "https://images.moneycontrol.com/static-mcnews/2024/08/Stock-market-up.jpg",
-    },
-    {
-      id: 2,
-      title: "Reliance announces new green energy project",
-      description:
-        "Reliance Industries plans to invest ₹20,000 crore in renewable energy, boosting its clean power portfolio.",
-      source: "Economic Times",
-      date: "2025-10-16",
-      category: "Company",
-      image:
-        "https://etimg.etb2bimg.com/photo/103992328.cms",
-    },
-    {
-      id: 3,
-      title: "Sensex hits record high amid global optimism",
-      description:
-        "The Sensex touched a new lifetime high as foreign inflows strengthened investor confidence.",
-      source: "Business Standard",
-      date: "2025-10-15",
-      category: "SENSEX",
-      image:
-        "https://bsmedia.business-standard.com/_media/bs/img/article/2023-12/18/full/1702907023-982.jpg",
-    },
-  ];
-
   useEffect(() => {
-    // You can later replace this with fetch(API_URL)
-    setNewsData(dummyNews);
+    const fetchNews = async () => {
+      try {
+        const res = await axios.get("https://newsapi.org/v2/everything", {
+          params: {
+            q: "Indian stock market",
+            from: "2025-10-20",
+            sortBy: "publishedAt",
+            language: "en",
+            apiKey: "6d1c4dcac0d54185a8c1fd9703d59347", // 🔁 Replace with your NewsAPI key
+          },
+        });
+
+        const formatted = res.data.articles.map((item, index) => ({
+          id: index,
+          title: item.title,
+          description: item.description,
+          source: item.source.name,
+          date: item.publishedAt.split("T")[0],
+          category: categorize(item.title),
+          image: item.urlToImage || "https://via.placeholder.com/400x200?text=No+Image",
+        }));
+
+        setNewsData(formatted);
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      }
+    };
+
+    fetchNews();
   }, []);
 
-  // Filter & search logic
+  // 🔍 Category detection based on title keywords
+  const categorize = (title) => {
+    const t = title.toLowerCase();
+    if (t.includes("nifty")) return "NIFTY";
+    if (t.includes("sensex")) return "SENSEX";
+    if (t.includes("reliance") || t.includes("tcs") || t.includes("infosys")) return "Company";
+    return "General";
+  };
+
+  // 🔎 Filter & search logic
   const filteredNews = newsData.filter((news) => {
-    const matchesCategory =
-      selectedCategory === "All" || news.category === selectedCategory;
-    const matchesSearch = news.title
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === "All" || news.category === selectedCategory;
+    const matchesSearch = news.title.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
@@ -89,6 +86,7 @@ function News() {
               <option>NIFTY</option>
               <option>SENSEX</option>
               <option>Company</option>
+              <option>General</option>
             </select>
           </div>
         </div>
@@ -101,11 +99,7 @@ function News() {
             key={news.id}
             className="rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200/50 dark:border-slate-700/50 shadow-md hover:shadow-xl transition duration-300"
           >
-            <img
-              src={news.image}
-              alt={news.title}
-              className="h-40 w-full object-cover"
-            />
+            <img src={news.image} alt={news.title} className="h-40 w-full object-cover" />
             <div className="p-4 space-y-2">
               <h3 className="text-lg font-semibold text-slate-800 dark:text-white line-clamp-2">
                 {news.title}
@@ -114,12 +108,8 @@ function News() {
                 {news.description}
               </p>
               <div className="flex justify-between items-center pt-2 text-sm">
-                <span className="text-blue-600 dark:text-blue-400 font-medium">
-                  {news.source}
-                </span>
-                <span className="text-slate-500 dark:text-slate-400">
-                  {news.date}
-                </span>
+                <span className="text-blue-600 dark:text-blue-400 font-medium">{news.source}</span>
+                <span className="text-slate-500 dark:text-slate-400">{news.date}</span>
               </div>
             </div>
           </div>

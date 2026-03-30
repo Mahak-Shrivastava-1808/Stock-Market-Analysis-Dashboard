@@ -1,16 +1,65 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import { getStockPrice } from "../../services/api";
 
-// Example portfolio data (replace with real API data if needed)
-const portfolioData = [
-  { name: "Technology", value: 35, color: "#3b82f6" },
-  { name: "Finance", value: 25, color: "#8b5cf6" },
-  { name: "Healthcare", value: 20, color: "#10b981" },
-  { name: "Energy", value: 10, color: "#f59e0b" },
-  { name: "Other", value: 10, color: "#ef4444" },
-];
+function PortfolioPieChart({ ticker = "AAPL" }) {
+  const [portfolioData, setPortfolioData] = useState([]);
 
-function PortfolioPieChart() {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { price } = await getStockPrice(ticker);
+
+        // Simulate allocation based on stock type
+        let data;
+        switch (ticker) {
+          case "AAPL":
+          case "MSFT":
+            data = [
+              { name: "Technology", value: 50, color: "#3b82f6" },
+              { name: "Finance", value: 20, color: "#8b5cf6" },
+              { name: "Healthcare", value: 15, color: "#10b981" },
+              { name: "Energy", value: 10, color: "#f59e0b" },
+              { name: "Other", value: 5, color: "#ef4444" },
+            ];
+            break;
+          case "GOOGL":
+            data = [
+              { name: "Technology", value: 60, color: "#3b82f6" },
+              { name: "Finance", value: 15, color: "#8b5cf6" },
+              { name: "Healthcare", value: 10, color: "#10b981" },
+              { name: "Energy", value: 10, color: "#f59e0b" },
+              { name: "Other", value: 5, color: "#ef4444" },
+            ];
+            break;
+          case "TSLA":
+            data = [
+              { name: "Energy", value: 40, color: "#f59e0b" },
+              { name: "Technology", value: 30, color: "#3b82f6" },
+              { name: "Finance", value: 10, color: "#8b5cf6" },
+              { name: "Healthcare", value: 10, color: "#10b981" },
+              { name: "Other", value: 10, color: "#ef4444" },
+            ];
+            break;
+          default:
+            data = [
+              { name: "Technology", value: 35, color: "#3b82f6" },
+              { name: "Finance", value: 25, color: "#8b5cf6" },
+              { name: "Healthcare", value: 20, color: "#10b981" },
+              { name: "Energy", value: 10, color: "#f59e0b" },
+              { name: "Other", value: 10, color: "#ef4444" },
+            ];
+        }
+
+        setPortfolioData(data);
+      } catch (error) {
+        console.error("Error fetching portfolio data:", error);
+      }
+    };
+
+    fetchData();
+  }, [ticker]);
+
   return (
     <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-b-2xl p-6 border border-slate-200/50 dark:border-slate-700/50">
       {/* Header */}
@@ -19,7 +68,7 @@ function PortfolioPieChart() {
           Portfolio Allocation
         </h3>
         <p className="text-sm text-slate-500 dark:text-slate-400">
-          Distribution of stocks across sectors
+          Distribution of {ticker} across sectors
         </p>
       </div>
 
@@ -56,10 +105,7 @@ function PortfolioPieChart() {
       {/* Legend */}
       <div className="space-y-3 mt-4">
         {portfolioData.map((item, index) => (
-          <div
-            className="flex items-center justify-between"
-            key={index}
-          >
+          <div className="flex items-center justify-between" key={index}>
             <div className="flex items-center space-x-3">
               <div
                 className="w-3 h-3 rounded-full"

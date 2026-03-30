@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   LineChart,
   Line,
@@ -8,24 +8,33 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { getStockHistory } from "../../services/api";
 
-// Example real-time stock data (replace with API data if available)
-const stockData = [
-  { month: "Jan", price: 3200 },
-  { month: "Feb", price: 3500 },
-  { month: "Mar", price: 3300 },
-  { month: "Apr", price: 3700 },
-  { month: "May", price: 3600 },
-  { month: "Jun", price: 3900 },
-  { month: "Jul", price: 4200 },
-  { month: "Aug", price: 4100 },
-  { month: "Sep", price: 4400 },
-  { month: "Oct", price: 4300 },
-  { month: "Nov", price: 4600 },
-  { month: "Dec", price: 4800 },
-];
+function StockLineChart({ ticker = "AAPL" }) {
+  const [stockData, setStockData] = useState([]);
 
-function StockLineChart() {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const history = await getStockHistory(ticker);
+
+        const formatted = history.map((item) => ({
+          month: new Date(item.date).toLocaleDateString("default", {
+            month: "short",
+            day: "numeric",
+          }),
+          price: item.price,
+        }));
+
+        setStockData(formatted);
+      } catch (error) {
+        console.error("Error fetching stock history:", error);
+      }
+    };
+
+    fetchData();
+  }, [ticker]);
+
   return (
     <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-b-2xl border border-slate-200/50 dark:border-slate-700/50 p-6">
       {/* Header */}
@@ -35,7 +44,7 @@ function StockLineChart() {
             Stock Price Chart
           </h3>
           <p className="text-sm text-slate-500 dark:text-slate-400">
-            Monthly stock price overview
+            30-day price trend for {ticker}
           </p>
         </div>
         <div className="flex items-center space-x-4">

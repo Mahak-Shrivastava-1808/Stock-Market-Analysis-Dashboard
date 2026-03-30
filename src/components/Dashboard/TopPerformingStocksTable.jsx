@@ -1,12 +1,42 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
+import { getStockPrice } from "../../services/api";
 
-const topStocks = [
-  { stock: "INFY", change: "+4.2%", price: "₹1,693", volume: "1.2M" },
-  { stock: "TCS", change: "+3.1%", price: "₹3,520", volume: "900K" },
-  { stock: "RELIANCE", change: "+2.5%", price: "₹2,860", volume: "1.5M" },
+const topStocksList = [
+  { stock: "INFY", previous: 1625, volume: "1.2M" },
+  { stock: "TCS", previous: 3520, volume: "900K" },
+  { stock: "RELIANCE", previous: 2850, volume: "1.5M" },
 ];
 
 function TopPerformingStocksTable() {
+  const [liveData, setLiveData] = useState([]);
+
+  useEffect(() => {
+    const fetchPrices = async () => {
+      const results = await Promise.all(
+        topStocksList.map((s) => getStockPrice(s.stock))
+      );
+
+      const updated = topStocksList.map((s, i) => {
+        const current = results[i].price;
+        const changeValue = current - s.previous;
+        const changePercent = ((changeValue / s.previous) * 100).toFixed(1);
+        const changeText = `${changeValue >= 0 ? "+" : ""}${changePercent}%`;
+        return {
+          stock: s.stock,
+          price: `₹${current.toLocaleString()}`,
+          change: changeText,
+          volume: s.volume,
+        };
+      });
+
+      setLiveData(updated);
+    };
+
+    fetchPrices();
+    const interval = setInterval(fetchPrices, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-slate-200/50 dark:border-slate-700/50 p-6 overflow-x-auto">
       <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2">Top Performing Stocks</h3>
@@ -21,10 +51,19 @@ function TopPerformingStocksTable() {
           </tr>
         </thead>
         <tbody>
-          {topStocks.map((stock, index) => (
-            <tr key={index} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-200/50 dark:border-slate-700/50">
+          {liveData.map((stock, index) => (
+            <tr
+              key={index}
+              className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-200/50 dark:border-slate-700/50"
+            >
               <td className="p-2">{stock.stock}</td>
-              <td className={`p-2 font-semibold ${stock.change.includes('+') ? 'text-emerald-500' : 'text-red-500'}`}>{stock.change}</td>
+              <td
+                className={`p-2 font-semibold ${
+                  stock.change.includes("+") ? "text-emerald-500" : "text-red-500"
+                }`}
+              >
+                {stock.change}
+              </td>
               <td className="p-2">{stock.price}</td>
               <td className="p-2">{stock.volume}</td>
             </tr>

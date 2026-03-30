@@ -1,20 +1,38 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 function Signup({ onSignup, onSwitchToLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [message, setMessage] = useState("");
 
-  const handleSubmit = (e) => {
+  const isStrongPassword = (pwd) => {
+    return /^(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=.{8,})/.test(pwd);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (email && password && name) {
-      const user = { email, name };
-      localStorage.setItem("user", JSON.stringify(user));
-      onSignup();
-    } else {
-      alert("Please fill all fields");
+    if (!email || !password || !name) {
+      setMessage("Please fill all fields");
+      return;
+    }
+
+    if (!isStrongPassword(password)) {
+      setMessage("Password must be at least 8 characters, include one capital letter and one special character");
+      return;
+    }
+
+    try {
+      const res = await axios.post("http://localhost:5000/signup", { email, password, name });
+      setMessage("Account created successfully");
+      setTimeout(() => {
+        onSwitchToLogin(); // ✅ Redirect to login after success
+      }, 1500);
+    } catch (err) {
+      setMessage(err.response?.data?.error || "Signup failed");
     }
   };
 
@@ -28,7 +46,6 @@ function Signup({ onSignup, onSwitchToLogin }) {
           Create Account
         </h2>
 
-        {/* Full Name */}
         <input
           type="text"
           placeholder="Full Name"
@@ -37,7 +54,6 @@ function Signup({ onSignup, onSwitchToLogin }) {
           onChange={(e) => setName(e.target.value)}
         />
 
-        {/* Email */}
         <input
           type="email"
           placeholder="Email"
@@ -46,7 +62,6 @@ function Signup({ onSignup, onSwitchToLogin }) {
           onChange={(e) => setEmail(e.target.value)}
         />
 
-        {/* Password with Show/Hide */}
         <div className="relative">
           <input
             type={showPassword ? "text" : "password"}
@@ -64,13 +79,16 @@ function Signup({ onSignup, onSwitchToLogin }) {
           </button>
         </div>
 
-        {/* Submit */}
         <button
           type="submit"
           className="w-full py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
         >
           Sign Up
         </button>
+
+        {message && (
+          <p className="text-center text-sm text-green-600 dark:text-green-400">{message}</p>
+        )}
 
         <p className="text-center text-sm text-slate-500">
           Already have an account?{" "}

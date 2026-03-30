@@ -1,18 +1,29 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 function Login({ onLogin, onSwitchToSignup }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [message, setMessage] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (email && password) {
-      localStorage.setItem("user", JSON.stringify({ email }));
-      onLogin();
-    } else {
-      alert("Please enter email and password");
+    if (!email || !password) {
+      setMessage("Please enter email and password");
+      return;
+    }
+
+    try {
+      const res = await axios.post("http://localhost:5000/login", { email, password });
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      setMessage("Login successful");
+      setTimeout(() => {
+        onLogin(); // ✅ Redirect to dashboard
+      }, 1000);
+    } catch (err) {
+      setMessage(err.response?.data?.error || "Login failed");
     }
   };
 
@@ -26,7 +37,6 @@ function Login({ onLogin, onSwitchToSignup }) {
           Login
         </h2>
 
-        {/* Email Input */}
         <input
           type="email"
           placeholder="Email"
@@ -35,7 +45,6 @@ function Login({ onLogin, onSwitchToSignup }) {
           onChange={(e) => setEmail(e.target.value)}
         />
 
-        {/* Password Input with Show/Hide */}
         <div className="relative">
           <input
             type={showPassword ? "text" : "password"}
@@ -53,13 +62,16 @@ function Login({ onLogin, onSwitchToSignup }) {
           </button>
         </div>
 
-        {/* Submit */}
         <button
           type="submit"
           className="w-full py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
         >
           Login
         </button>
+
+        {message && (
+          <p className="text-center text-sm text-green-600 dark:text-green-400">{message}</p>
+        )}
 
         <p className="text-center text-sm text-slate-500">
           Don’t have an account?{" "}

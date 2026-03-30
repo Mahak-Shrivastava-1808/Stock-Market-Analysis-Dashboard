@@ -1,12 +1,34 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
+import { getStockPrice } from "../../services/api";
 
-const watchlist = [
-  { stock: "INFY", price: "₹1,693", target: "₹1,750", alert: "Uptrend" },
-  { stock: "TCS", price: "₹3,520", target: "₹3,600", alert: "Hold" },
-  { stock: "RELIANCE", price: "₹2,860", target: "₹3,000", alert: "Buy" },
+const watchlistConfig = [
+  { stock: "INFY", target: "₹1,750", alert: "Uptrend" },
+  { stock: "TCS", target: "₹3,600", alert: "Hold" },
+  { stock: "RELIANCE", target: "₹3,000", alert: "Buy" },
 ];
 
 function WatchlistOverviewTable() {
+  const [livePrices, setLivePrices] = useState({});
+
+  useEffect(() => {
+    const fetchPrices = async () => {
+      const results = await Promise.all(
+        watchlistConfig.map((item) => getStockPrice(item.stock))
+      );
+
+      const priceMap = {};
+      results.forEach((res) => {
+        priceMap[res.ticker] = res.price;
+      });
+
+      setLivePrices(priceMap);
+    };
+
+    fetchPrices();
+    const interval = setInterval(fetchPrices, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-slate-200/50 dark:border-slate-700/50 p-6 overflow-x-auto">
       <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2">Watchlist Overview</h3>
@@ -21,10 +43,17 @@ function WatchlistOverviewTable() {
           </tr>
         </thead>
         <tbody>
-          {watchlist.map((item, index) => (
-            <tr key={index} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-200/50 dark:border-slate-700/50">
+          {watchlistConfig.map((item, index) => (
+            <tr
+              key={index}
+              className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-200/50 dark:border-slate-700/50"
+            >
               <td className="p-2">{item.stock}</td>
-              <td className="p-2">{item.price}</td>
+              <td className="p-2">
+                {livePrices[item.stock] !== undefined
+                  ? `₹${livePrices[item.stock].toLocaleString()}`
+                  : "Loading..."}
+              </td>
               <td className="p-2">{item.target}</td>
               <td className="p-2">{item.alert}</td>
             </tr>

@@ -18,6 +18,13 @@ function App() {
   const [showSignup, setShowSignup] = useState(false);
 
   useEffect(() => {
+    // ✅ Clear session on first app load
+    const firstLoad = sessionStorage.getItem("firstLoadDone");
+    if (!firstLoad) {
+      localStorage.removeItem("user");
+      sessionStorage.setItem("firstLoadDone", "true");
+    }
+
     const savedUser = localStorage.getItem("user");
     if (savedUser) setIsAuthenticated(true);
 
@@ -33,24 +40,36 @@ function App() {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
+    sessionStorage.removeItem("firstLoadDone"); // ✅ Reset for next app start
     setIsAuthenticated(false);
     setShowSignup(false);
+    setCurrentPage("dashboard");
   };
 
+  // ✅ Show login/signup first
   if (!isAuthenticated) {
     return showSignup ? (
       <Signup
-        onSignup={() => setIsAuthenticated(true)}
+        onSignup={() => {
+          setMessage("Account created successfully");
+          setTimeout(() => {
+            setShowSignup(false); // redirect to login
+          }, 1500);
+        }}
         onSwitchToLogin={() => setShowSignup(false)}
       />
     ) : (
       <Login
-        onLogin={() => setIsAuthenticated(true)}
+        onLogin={() => {
+          setIsAuthenticated(true);
+          setCurrentPage("dashboard");
+        }}
         onSwitchToSignup={() => setShowSignup(true)}
       />
     );
   }
 
+  // ✅ Main app after login
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:to-slate-900 transition-all duration-500">
       <div className="flex h-screen overflow-hidden">
