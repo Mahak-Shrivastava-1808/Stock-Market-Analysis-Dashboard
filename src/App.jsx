@@ -13,6 +13,7 @@ import Login from "./components/Auth/Login";
 import Signup from "./components/Auth/Signup";
 import MarketOverview from "./components/Dashboard/MarketOverview";
 import Analytics from "./components/Dashboard/Analytics";
+import AIRecommendations from "./components/Dashboard/AIRecommendations";
 
 function App() {
   const [sideBarCollapsed, setSideBarCollapsed] = useState(false);
@@ -89,6 +90,7 @@ function App() {
           <main className="flex-1 overflow-y-auto bg-transparent p-6">
             <div className="max-w-7xl mx-auto">
               {currentPage === "dashboard" && <Dashboard />}
+              {currentPage === "ai-recommendations" && <AIRecommendations />}
               {currentPage === "settings" && <Settings />}
               {currentPage === "notifications" && <Notifications />}
               {currentPage === "portfolio" && <Portfolio />}

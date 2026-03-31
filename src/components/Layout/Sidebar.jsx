@@ -10,11 +10,13 @@ import {
   ChevronDown,
   TrendingUp,
   BarChart2,
+  Bot, // AI icon ke liye
 } from "lucide-react";
 
 // ✅ Settings yahan se hata di gayi hai
 const menuItems = [
   { id: "dashboard", icon: LayoutDashboard, label: "Dashboard" },
+  { id: "ai-recommendations", icon: Bot, label: "AI Insights" },
   {
     id: "market-overview",
     icon: LineChart,
