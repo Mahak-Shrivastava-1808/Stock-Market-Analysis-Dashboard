@@ -6,13 +6,13 @@ import {
   Wallet,
   Star,
   Newspaper,
-  Settings,
   LogOut,
   ChevronDown,
   TrendingUp,
   BarChart2,
 } from "lucide-react";
 
+// ✅ Settings yahan se hata di gayi hai
 const menuItems = [
   { id: "dashboard", icon: LayoutDashboard, label: "Dashboard" },
   {
@@ -38,7 +38,6 @@ const menuItems = [
   },
   { id: "news", icon: Newspaper, label: "Market News" },
   { id: "sectors", icon: PieChart, label: "Sector Analysis" },
-  { id: "settings", icon: Settings, label: "Profile & Settings" },
   { id: "logout", icon: LogOut, label: "Logout" },
 ];
 
@@ -52,7 +51,6 @@ function Sidebar({ collapsed, currentPage, onPageChange }) {
     setExpandedItems(newExpanded);
   };
 
-  // ✅ Get user info from localStorage
   const user = JSON.parse(localStorage.getItem("user"));
 
   return (
@@ -119,6 +117,7 @@ function Sidebar({ collapsed, currentPage, onPageChange }) {
                   {item.submenu.map((subitem) => (
                     <button
                       key={subitem.id}
+                      onClick={() => onPageChange(subitem.id)}
                       className="w-full text-left p-2 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-lg"
                     >
                       {subitem.label}
@@ -131,7 +130,7 @@ function Sidebar({ collapsed, currentPage, onPageChange }) {
         })}
       </nav>
 
-      {/* ✅ User Profile Section */}
+      {/* User Profile Section */}
       {!collapsed && (
         <div className="p-4 border-t border-slate-200/50 dark:border-slate-700/50">
           <div className="flex items-center space-x-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50">

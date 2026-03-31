@@ -140,48 +140,9 @@ function Settings() {
               />
             </div>
 
-            {/* Theme */}
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Theme</p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Choose light or dark mode
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"
-              >
-                {theme === "dark" ? "Dark" : "Light"}
-              </button>
-            </div>
+            
 
-            {/* Notifications */}
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                  Notifications
-                </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Enable market push / email notifications
-                </p>
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="sr-only peer"
-                  checked={notificationsEnabled}
-                  onChange={() => {
-                    const next = !notificationsEnabled;
-                    setNotificationsEnabled(next);
-                    localStorage.setItem("ss_notifications", next.toString());
-                  }}
-                />
-                <div className="w-11 h-6 bg-slate-200 peer-checked:bg-emerald-500 rounded-full peer-focus:ring-2 peer-focus:ring-emerald-300 transition" />
-                <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow transform peer-checked:translate-x-5 transition" />
-              </label>
-            </div>
+            
 
             {/* Buttons */}
             <div className="flex items-center space-x-3">

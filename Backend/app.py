@@ -21,7 +21,7 @@ def get_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="Mahak@1919",  # 🔁 Replace with your actual MySQL password
+        password=os.getenv("DB_PASSWORD"),  # 🔁 Replace with your actual MySQL password
         database="stockscape"
     )
 

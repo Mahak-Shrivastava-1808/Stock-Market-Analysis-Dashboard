@@ -1,167 +1,44 @@
-import {
-  Menu,
-  Settings,
-  Search,
-  Sun,
-  Bell,
-  ChevronDown,
-  TrendingUp,
-  TrendingDown,
-} from "lucide-react";
-import React, { useState } from "react";
+import { Menu, Settings, Search, Sun, Moon, Bell, TrendingUp, TrendingDown } from "lucide-react";
+import React from "react";
 
-function Header({ sidebarCollapsed, onToggleSidebar }) {
-  const [theme, setTheme] = useState("light");
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const user = JSON.parse(localStorage.getItem("user"));
-
-  const handleThemeToggle = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-    if (newTheme === "dark")
-      document.documentElement.classList.add("dark");
-    else document.documentElement.classList.remove("dark");
-  };
-
-  const handleProfileClick = () => setShowProfileMenu(!showProfileMenu);
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    alert("Logged out!");
-    window.location.reload();
-  };
-
-  const handleSettings = () => {
-    if (typeof window.onPageChange === "function") {
-      window.onPageChange("settings");
-    }
-  };
-
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
-    console.log("Searching for:", e.target.value);
-  };
-
+function Header({ onToggleSidebar, theme, setTheme, onPageChange }) {
   return (
     <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-700/50 px-6 py-4">
       <div className="flex items-center justify-between">
-        {/* Left Section */}
         <div className="flex items-center space-x-4">
-          <button
-            className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-            onClick={onToggleSidebar}
-          >
+          <button onClick={onToggleSidebar} className="p-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
             <Menu className="w-5 h-5" />
           </button>
-
           <div className="hidden md:block">
-            <h1 className="text-2xl font-black text-slate-800 dark:text-white">
-              StockScope
-            </h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              Real-Time Market Insights
-            </p>
+            <h1 className="text-2xl font-black text-slate-800 dark:text-white">StockScope</h1>
           </div>
         </div>
 
-        {/* Search + Market Summary */}
         <div className="flex-1 max-w-2xl mx-8">
-          <div className="flex items-center justify-between text-sm mb-2">
-            <div className="flex items-center space-x-2 text-emerald-500 font-semibold">
-              <TrendingUp className="w-4 h-4" />
-              <span>NIFTY 50</span>
-              <span>22,550</span>
-              <span className="text-xs text-emerald-600">(+0.42%)</span>
-            </div>
-            <div className="flex items-center space-x-2 text-emerald-500 font-semibold">
-              <TrendingUp className="w-4 h-4" />
-              <span>SENSEX</span>
-              <span>74,890</span>
-              <span className="text-xs text-emerald-600">(+0.39%)</span>
-            </div>
-            <div className="flex items-center space-x-2 text-red-500 font-semibold">
-              <TrendingDown className="w-4 h-4" />
-              <span>NASDAQ</span>
-              <span>15,120</span>
-              <span className="text-xs text-red-500">(-0.18%)</span>
-            </div>
+          <div className="flex items-center justify-between text-sm mb-2 font-semibold">
+            <div className="flex items-center text-emerald-500"><TrendingUp className="w-4 h-4 mr-1"/> NIFTY 50 <span className="ml-2 text-xs">(+0.42%)</span></div>
+            <div className="flex items-center text-emerald-500"><TrendingUp className="w-4 h-4 mr-1"/> SENSEX <span className="ml-2 text-xs">(+0.39%)</span></div>
+            <div className="flex items-center text-red-500"><TrendingDown className="w-4 h-4 mr-1"/> NASDAQ <span className="ml-2 text-xs">(-0.18%)</span></div>
           </div>
-
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search Stocks, Companies or Symbols..."
-              value={searchQuery}
-              onChange={handleSearch}
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
-            />
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input type="text" placeholder="Search Stocks..." className="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
           </div>
         </div>
 
-        {/* Right Section */}
         <div className="flex items-center space-x-3">
-          <button
-            onClick={handleThemeToggle}
-            className="p-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          >
-            <Sun className="w-5 h-5" />
+          <button onClick={() => setTheme(theme === "light" ? "dark" : "light")} className="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300">
+            {theme === "light" ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
           </button>
 
-          <button className="relative p-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <button onClick={() => onPageChange("notifications")} className="relative p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300">
             <Bell className="w-5 h-5" />
-            <span className="absolute -top-1 right-0 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center">
-              2
-            </span>
+            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
           </button>
 
-          <button
-            onClick={handleSettings}
-            className="p-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          >
+          <button onClick={() => onPageChange("settings")} className="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300">
             <Settings className="w-5 h-5" />
           </button>
-
-          {/* ✅ User Profile */}
-          <div className="relative">
-            <button
-              onClick={handleProfileClick}
-              className="flex items-center space-x-3 pl-3 border-l border-slate-200 dark:border-slate-700"
-            >
-              <img
-                src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                alt="User"
-                className="w-8 h-8 rounded-full ring-2 ring-emerald-500"
-              />
-              <div className="hidden md:block">
-                <p className="text-sm font-medium text-slate-800 dark:text-white">
-                  {user?.name || "Guest User"}
-                </p>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  {user?.email || "guest@example.com"}
-                </p>
-              </div>
-              <ChevronDown className="w-4 h-4 text-slate-400" />
-            </button>
-
-            {showProfileMenu && (
-              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg z-50">
-                <button
-                  onClick={handleSettings}
-                  className="w-full text-left px-4 py-2 hover:bg-slate-100 dark:hover:bg-slate-700"
-                >
-                  Profile / Settings
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 text-red-500 hover:bg-slate-100 dark:hover:bg-slate-700"
-                >
-                  Logout
-                </button>
-              </div>
-            )}
-          </div>
         </div>
       </div>
     </div>

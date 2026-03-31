@@ -3,6 +3,7 @@ import Sidebar from "./components/Layout/Sidebar";
 import Header from "./components/Layout/Header";
 import Dashboard from "./components/Dashboard/Dashboard";
 import Settings from "./components/Settings/Settings";
+import Notifications from "./components/Notifications/Notifications";
 import Portfolio from "./components/Portfolio/Portfolio";
 import Watchlist from "./components/Watchlist/Watchlist";
 import News from "./components/News/News";
@@ -17,20 +18,33 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
 
+  // Theme Logic
+  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "light");
+
   useEffect(() => {
-    // ✅ Clear session on first app load
+    const root = window.document.documentElement;
+    if (theme === "dark") {
+      root.classList.add("dark");
+      root.style.colorScheme = "dark";
+    } else {
+      root.classList.remove("dark");
+      root.style.colorScheme = "light";
+    }
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  useEffect(() => {
     const firstLoad = sessionStorage.getItem("firstLoadDone");
     if (!firstLoad) {
       localStorage.removeItem("user");
       sessionStorage.setItem("firstLoadDone", "true");
     }
-
     const savedUser = localStorage.getItem("user");
     if (savedUser) setIsAuthenticated(true);
 
     const savedPage = localStorage.getItem("currentPage");
     if (savedPage) setCurrentPage(savedPage);
-
+    
     window.onPageChange = setCurrentPage;
   }, []);
 
@@ -40,62 +54,46 @@ function App() {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    sessionStorage.removeItem("firstLoadDone"); // ✅ Reset for next app start
+    sessionStorage.removeItem("firstLoadDone");
     setIsAuthenticated(false);
-    setShowSignup(false);
     setCurrentPage("dashboard");
   };
 
-  // ✅ Show login/signup first
   if (!isAuthenticated) {
     return showSignup ? (
-      <Signup
-        onSignup={() => {
-          setMessage("Account created successfully");
-          setTimeout(() => {
-            setShowSignup(false); // redirect to login
-          }, 1500);
-        }}
-        onSwitchToLogin={() => setShowSignup(false)}
-      />
+      <Signup onSwitchToLogin={() => setShowSignup(false)} />
     ) : (
-      <Login
-        onLogin={() => {
-          setIsAuthenticated(true);
-          setCurrentPage("dashboard");
-        }}
-        onSwitchToSignup={() => setShowSignup(true)}
-      />
+      <Login onLogin={() => setIsAuthenticated(true)} onSwitchToSignup={() => setShowSignup(true)} />
     );
   }
 
-  // ✅ Main app after login
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:to-slate-900 transition-all duration-500">
+    <div className={`min-h-screen transition-colors duration-500 ${theme === 'dark' ? 'dark bg-slate-900' : 'bg-slate-50'}`}>
       <div className="flex h-screen overflow-hidden">
         <Sidebar
           collapsed={sideBarCollapsed}
-          onToggle={() => setSideBarCollapsed(!sideBarCollapsed)}
           currentPage={currentPage}
           onPageChange={setCurrentPage}
         />
 
         <div className="flex-1 flex flex-col overflow-hidden">
           <Header
-            sideBarCollapsed={sideBarCollapsed}
+            theme={theme}
+            setTheme={setTheme}
             onToggleSidebar={() => setSideBarCollapsed(!sideBarCollapsed)}
-            onLogout={handleLogout}
+            onPageChange={setCurrentPage}
           />
 
-          <main className="flex-1 overflow-y-auto bg-transparent">
-            <div className="p-6 space-y-6">
+          <main className="flex-1 overflow-y-auto bg-transparent p-6">
+            <div className="max-w-7xl mx-auto">
               {currentPage === "dashboard" && <Dashboard />}
               {currentPage === "settings" && <Settings />}
+              {currentPage === "notifications" && <Notifications />}
               {currentPage === "portfolio" && <Portfolio />}
               {currentPage === "watchlist" && <Watchlist />}
               {currentPage === "news" && <News />}
-              {currentPage === "logout" && <Logout />}
               {currentPage === "sectors" && <Sectors />}
+              {currentPage === "logout" && <Logout onLogout={handleLogout} />}
             </div>
           </main>
         </div>

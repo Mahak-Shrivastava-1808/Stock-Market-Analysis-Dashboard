@@ -1,1 +1,7 @@
 @import "tailwindcss";
+
+/* Tailwind v4 mein dark mode class enable karne ke liye ye line add karein */
+@variant dark (&:where(.dark, .dark *));
+
+/* Agar upar wali line kaam na kare (purana syntax), toh ye try karein: */
+@custom-variant dark (&:where(.dark, .dark *));
