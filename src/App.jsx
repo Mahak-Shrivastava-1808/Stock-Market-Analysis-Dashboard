@@ -11,6 +11,8 @@ import Logout from "./components/Logout/Logout";
 import Sectors from "./components/Sectors/Sectors";
 import Login from "./components/Auth/Login";
 import Signup from "./components/Auth/Signup";
+import MarketOverview from "./components/Dashboard/MarketOverview";
+import Analytics from "./components/Dashboard/Analytics";
 
 function App() {
   const [sideBarCollapsed, setSideBarCollapsed] = useState(false);
@@ -94,6 +96,8 @@ function App() {
               {currentPage === "news" && <News />}
               {currentPage === "sectors" && <Sectors />}
               {currentPage === "logout" && <Logout onLogout={handleLogout} />}
+              {(currentPage === "indices" || currentPage === "top-gainers" || currentPage === "top-losers") && <MarketOverview type={currentPage} />}
+              {(currentPage === "performance" || currentPage === "growth") && <Analytics type={currentPage} />}
             </div>
           </main>
         </div>
