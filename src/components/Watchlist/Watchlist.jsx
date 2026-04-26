@@ -12,28 +12,35 @@ function Watchlist() {
   const [liveData, setLiveData] = useState({});
 
   // 🔄 Fetch live prices
-  const fetchLivePrices = async () => {
+ const fetchLivePrices = async () => {
+  try {
     const results = await Promise.all(
       watchlist.map((stock) =>
         axios
           .get(`http://localhost:5000/price/${stock.name}`)
-          .then((res) => ({ name: stock.name, price: res.data.price }))
-          .catch(() => ({ name: stock.name, price: 0 }))
+          .then((res) => ({ 
+            name: stock.name, 
+            price: res.data.price,
+            dailyChange: res.data.change // Backend se ye data mangwayenge
+          }))
+          .catch(() => ({ name: stock.name, price: 0, dailyChange: 0 }))
       )
     );
 
-    const updated = {};
-    results.forEach((item, i) => {
-      const prev = liveData[item.name]?.price || item.price;
-      const change = prev === 0 ? 0 : (((item.price - prev) / prev) * 100).toFixed(2);
-      updated[item.name] = {
+    const newLiveData = {};
+    results.forEach((item) => {
+      newLiveData[item.name] = {
         price: item.price,
-        change: parseFloat(change),
+        // Agar live update nahi hua, toh backend wala default change dikhao
+        change: item.dailyChange || 0 
       };
     });
 
-    setLiveData(updated);
-  };
+    setLiveData(newLiveData);
+  } catch (err) {
+    console.error("Polling error:", err);
+  }
+};
 
   useEffect(() => {
     fetchLivePrices();

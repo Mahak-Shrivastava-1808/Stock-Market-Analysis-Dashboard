@@ -1,126 +1,111 @@
 import React, { useState, useEffect } from "react";
-import { Newspaper, Search, Filter } from "lucide-react";
+import { Newspaper, Search, ExternalLink, Loader2, Calendar } from "lucide-react";
 import axios from "axios";
 
 function News() {
   const [newsData, setNewsData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const res = await axios.get("https://newsapi.org/v2/everything", {
-          params: {
-            q: "Indian stock market",
-            from: "2025-10-20",
-            sortBy: "publishedAt",
-            language: "en",
-            apiKey: "6d1c4dcac0d54185a8c1fd9703d59347", // 🔁 Replace with your NewsAPI key
-          },
-        });
-
-        const formatted = res.data.articles.map((item, index) => ({
-          id: index,
-          title: item.title,
-          description: item.description,
-          source: item.source.name,
-          date: item.publishedAt.split("T")[0],
-          category: categorize(item.title),
-          image: item.urlToImage || "https://via.placeholder.com/400x200?text=No+Image",
-        }));
-
-        setNewsData(formatted);
+        const res = await axios.get("http://127.0.0.1:5000/market-news");
+        setNewsData(res.data);
       } catch (error) {
-        console.error("Error fetching news:", error);
+        console.error("News fetch error:", error);
+      } finally {
+        setLoading(false);
       }
     };
-
     fetchNews();
   }, []);
 
-  // 🔍 Category detection based on title keywords
-  const categorize = (title) => {
-    const t = title.toLowerCase();
-    if (t.includes("nifty")) return "NIFTY";
-    if (t.includes("sensex")) return "SENSEX";
-    if (t.includes("reliance") || t.includes("tcs") || t.includes("infosys")) return "Company";
-    return "General";
-  };
+  const filteredNews = newsData.filter((news) =>
+    (news.title || "").toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  // 🔎 Filter & search logic
-  const filteredNews = newsData.filter((news) => {
-    const matchesCategory = selectedCategory === "All" || news.category === selectedCategory;
-    const matchesSearch = news.title.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center p-32">
+      <Loader2 className="w-10 h-10 animate-spin text-emerald-500" />
+      <p className="mt-4 text-slate-500 font-medium italic">Fetching latest global market news...</p>
+    </div>
+  );
 
   return (
-    <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl p-6 shadow-lg">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-3">
-        <h2 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
-          <Newspaper className="w-6 h-6 text-blue-500" /> Market News & Updates
-        </h2>
+    <div className="p-4 md:p-8 max-w-7xl mx-auto">
+      {/* Search & Header Section */}
+      <div className="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
+        <div>
+          <h2 className="text-3xl font-black text-slate-800 dark:text-white flex items-center gap-3">
+            <span className="p-2 bg-emerald-500 rounded-xl shadow-lg shadow-emerald-500/20">
+              <Newspaper className="w-6 h-6 text-white" />
+            </span> 
+            Live Market Updates
+          </h2>
+        </div>
 
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-500" />
-            <input
-              type="text"
-              placeholder="Search news..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 pr-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white/70 dark:bg-slate-800 text-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            />
-          </div>
-
-          <div className="relative">
-            <Filter className="absolute left-3 top-2.5 w-4 h-4 text-slate-500" />
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="pl-9 pr-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white/70 dark:bg-slate-800 text-slate-800 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            >
-              <option>All</option>
-              <option>NIFTY</option>
-              <option>SENSEX</option>
-              <option>Company</option>
-              <option>General</option>
-            </select>
-          </div>
+        <div className="relative group w-full md:w-80">
+          <Search className="absolute left-4 top-3.5 w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
+          <input
+            type="text"
+            placeholder="Search news articles..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-11 pr-4 py-3 rounded-2xl border-none bg-white dark:bg-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none outline-none focus:ring-2 focus:ring-emerald-500/50 text-slate-700 dark:text-white"
+          />
         </div>
       </div>
 
       {/* News Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredNews.map((news) => (
-          <div
-            key={news.id}
-            className="rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-800/50 border border-slate-200/50 dark:border-slate-700/50 shadow-md hover:shadow-xl transition duration-300"
-          >
-            <img src={news.image} alt={news.title} className="h-40 w-full object-cover" />
-            <div className="p-4 space-y-2">
-              <h3 className="text-lg font-semibold text-slate-800 dark:text-white line-clamp-2">
+          <div key={news.id} className="group flex flex-col bg-white dark:bg-slate-900 rounded-[2.5rem] overflow-hidden border border-slate-100 dark:border-slate-800 hover:shadow-2xl hover:shadow-emerald-500/10 transition-all duration-500">
+            {/* Image Section */}
+            <div className="relative h-60 overflow-hidden">
+              <img 
+                src={news.thumbnail} 
+                alt="market"
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent" />
+              <div className="absolute bottom-4 left-6">
+                <span className="px-3 py-1 bg-emerald-500 text-white text-[10px] font-black rounded-lg uppercase tracking-wider">
+                  {news.publisher}
+                </span>
+              </div>
+            </div>
+
+            {/* Content Section */}
+            <div className="p-8 flex flex-col flex-grow">
+              <div className="flex items-center gap-2 mb-4 text-slate-400 text-xs">
+                <Calendar size={14} />
+                <span>{news.date}</span>
+              </div>
+              
+              <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4 line-clamp-2 leading-snug group-hover:text-emerald-600 transition-colors">
                 {news.title}
               </h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-3">
+              
+              <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-3 mb-6 leading-relaxed">
                 {news.description}
               </p>
-              <div className="flex justify-between items-center pt-2 text-sm">
-                <span className="text-blue-600 dark:text-blue-400 font-medium">{news.source}</span>
-                <span className="text-slate-500 dark:text-slate-400">{news.date}</span>
+
+              <div className="mt-auto">
+                <a 
+                  href={news.link} 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 font-bold text-sm text-emerald-500 hover:text-emerald-600 transition-all group/btn"
+                >
+                  FULL COVERAGE 
+                  <ExternalLink size={16} className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
+                </a>
               </div>
             </div>
           </div>
         ))}
       </div>
-
-      {filteredNews.length === 0 && (
-        <p className="text-center text-slate-500 dark:text-slate-400 mt-6">
-          No news found for your selection.
-        </p>
-      )}
     </div>
   );
 }
